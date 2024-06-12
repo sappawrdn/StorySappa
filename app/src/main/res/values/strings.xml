@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">storysappa</string>
+    <string name="title_welcome_page">Over 5,000 story are waiting for you</string>
+    <string name="login">Login</string>
+    <string name="signup">Sign Up</string>
+    <string name="title_signup_page">Welcome to Storysappa</string>
+    <string name="name">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="title_login_page">Login into your account</string>
+    <string name="message_login_page">Welcome back! We\'re glad to see you again</string>
+    <string name="logout">Logout</string>
+</resources>
