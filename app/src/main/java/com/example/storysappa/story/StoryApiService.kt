@@ -5,7 +5,5 @@ import retrofit2.http.Header
 
 interface StoryApiService {
     @GET("stories")
-    suspend fun getStories(
-        @Header("Authorization") token: String,
-    ): StoryResponse
+    suspend fun getStories(): StoryResponse
 }

@@ -1,5 +1,6 @@
 package com.example.storysappa.story
 
+import android.util.Log
 import com.example.storysappa.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -15,6 +16,8 @@ object StoryApiConfig {
             val requestHeaders = req.newBuilder()
                 .addHeader("Authorization", "Bearer $token")
                 .build()
+            Log.d("API Request", "URL: ${requestHeaders.url}")
+            Log.d("API Request", "Headers: ${requestHeaders.headers}")
             chain.proceed(requestHeaders)
         }
         val client = OkHttpClient.Builder()
