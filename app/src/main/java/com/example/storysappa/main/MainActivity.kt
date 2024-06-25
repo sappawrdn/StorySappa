@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.storysappa.AddStoryActivity
 import com.example.storysappa.DetailActivity
 import com.example.storysappa.R
 import com.example.storysappa.UserPreference
@@ -56,9 +57,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        binding.buttonAdd.setOnClickListener {
+            val intent = Intent(this, AddStoryActivity::class.java)
+            startActivity(intent)
+        }
+
         viewModelStory.stories.observe(this, { response ->
             adapter.submitList(response.listStory)
         })
+
         setupView()
         viewModelStory.fetchStories()
         showRecyclerList()
@@ -93,6 +100,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         binding.rvStory.adapter = adapter
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModelStory.fetchStories()
     }
 
 }

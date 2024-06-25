@@ -7,6 +7,8 @@ import com.example.storysappa.signup.SignupApiconfig
 import com.example.storysappa.signup.SignupRepository
 import com.example.storysappa.story.StoryApiConfig
 import com.example.storysappa.story.StoryRepository
+import com.example.storysappa.upload.UploadApiConfig
+import com.example.storysappa.upload.UploadApiRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
@@ -32,6 +34,13 @@ object Injection {
         val user = runBlocking { pref.getSession().first() }
         val apiService = StoryApiConfig.getApiService(user.token)
         return StoryRepository.getInstance(apiService, pref)
+    }
+
+    fun provideUploadRepository(context: Context): UploadApiRepository{
+        val pref = UserPreference.getInstance(context.dataStore)
+        val user = runBlocking { pref.getSession().first() }
+        val apiService = UploadApiConfig.getApiService(user.token)
+        return UploadApiRepository.getInstance(apiService, pref)
     }
 
 }

@@ -10,12 +10,15 @@ import com.example.storysappa.signup.SignupRepository
 import com.example.storysappa.signup.SignupViewModel
 import com.example.storysappa.story.StoryRepository
 import com.example.storysappa.story.StoryViewModel
+import com.example.storysappa.upload.UploadApiRepository
+import com.example.storysappa.upload.UploadViewModel
 
 class ViewModelFactory private constructor(
     private val userRepository: UserRepository,
     private val signupRepository: SignupRepository,
     private val loginRepository: LoginRepository,
-    private val storyRepository: StoryRepository
+    private val storyRepository: StoryRepository,
+    private val uploadApiRepository: UploadApiRepository
 ) : ViewModelProvider.NewInstanceFactory()
 {
     @Suppress("UNCHECKED_CAST")
@@ -33,6 +36,9 @@ class ViewModelFactory private constructor(
             modelClass.isAssignableFrom(StoryViewModel::class.java) -> {
                 StoryViewModel(storyRepository) as T
             }
+            modelClass.isAssignableFrom(UploadViewModel::class.java) -> {
+                UploadViewModel(uploadApiRepository) as T
+            }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
     }
@@ -47,7 +53,8 @@ class ViewModelFactory private constructor(
                     Injection.provideRepository(context),
                     Injection.provideSignupRepository(),
                     Injection.provideLoginRepository(),
-                    Injection.provideStoryRepository(context)
+                    Injection.provideStoryRepository(context),
+                    Injection.provideUploadRepository(context)
                 ).also { INSTANCE = it }
             }
         }
