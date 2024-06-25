@@ -3,12 +3,14 @@ package com.example.storysappa.login
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.storysappa.UserModel
 import com.example.storysappa.UserPreference
 import com.example.storysappa.UserRepository
@@ -16,12 +18,12 @@ import com.example.storysappa.ViewModelFactory
 import com.example.storysappa.dataStore
 import com.example.storysappa.databinding.ActivityLoginBinding
 import com.example.storysappa.main.MainActivity
+import com.example.storysappa.main.MainViewModel
 
 class LoginActivity : AppCompatActivity() {
 
-    private val loginViewModel by viewModels<LoginViewModel> {
-        ViewModelFactory.getInstance(this)
-    }
+    private lateinit var loginViewModel: LoginViewModel
+
     private lateinit var binding: ActivityLoginBinding
 
     private lateinit var userRepository: UserRepository
@@ -31,13 +33,27 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val factory = ViewModelFactory.getInstance(applicationContext)
+        loginViewModel = ViewModelProvider(this, factory).get(LoginViewModel::class.java)
+
         val userPreference = UserPreference.getInstance(dataStore)
         userRepository = UserRepository.getInstance(userPreference)
 
+        loginViewModel.isLoading.observe(this, Observer { isLoading ->
+            if (isLoading) {
+                showLoading(isLoading)
+            } else {
+                showLoading(isLoading)
+            }
+        })
 
         setupView()
         setupAction()
         observeViewModel()
+
+        loginViewModel.isLoading.observe(this){
+            showLoading(it)
+        }
     }
 
     private fun setupView() {
@@ -66,8 +82,6 @@ class LoginActivity : AppCompatActivity() {
             response?.let {
                 if (it.error == false) {
                     showSuccessDialog(it.message ?: "Login successful")
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
                 } else {
                     showErrorDialog(it.message ?: "Login failed")
                 }
@@ -86,7 +100,7 @@ class LoginActivity : AppCompatActivity() {
             setTitle("Error")
             setMessage(errorMessage)
             setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
+                finish()
             }
             create()
             show()
@@ -98,10 +112,25 @@ class LoginActivity : AppCompatActivity() {
             setTitle("Success")
             setMessage(message)
             setPositiveButton("OK") { dialog, _ ->
-                finish()
+                dialog.dismiss()
+                navigateToHome()
             }
-            create()
             show()
+        }
+    }
+
+    private fun navigateToHome() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.progbar.visibility = View.VISIBLE
+        } else {
+            binding.progbar.visibility = View.GONE
         }
     }
 }

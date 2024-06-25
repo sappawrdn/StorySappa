@@ -44,19 +44,15 @@ class ViewModelFactory private constructor(
     }
 
     companion object {
-        @Volatile
-        private var INSTANCE: ViewModelFactory? = null
         @JvmStatic
         fun getInstance(context: Context): ViewModelFactory {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: ViewModelFactory(
-                    Injection.provideRepository(context),
-                    Injection.provideSignupRepository(),
-                    Injection.provideLoginRepository(),
-                    Injection.provideStoryRepository(context),
-                    Injection.provideUploadRepository(context)
-                ).also { INSTANCE = it }
-            }
+            return ViewModelFactory(
+                Injection.provideRepository(context),
+                Injection.provideSignupRepository(),
+                Injection.provideLoginRepository(),
+                Injection.provideStoryRepository(context),
+                Injection.provideUploadRepository(context)
+            )
         }
     }
 }

@@ -11,13 +11,9 @@ class LoginRepository private constructor(
     }
 
     companion object {
-        @Volatile
-        private var INSTANCE: LoginRepository? = null
-
+        @JvmStatic
         fun getInstance(loginApiService: LoginApiService): LoginRepository {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: LoginRepository(loginApiService).also { INSTANCE = it }
-            }
+            return LoginRepository(loginApiService)
         }
     }
 }

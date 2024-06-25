@@ -10,11 +10,13 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.storysappa.DetailActivity.Companion.EXTRA_STORY
 import com.example.storysappa.databinding.AddStoryActivityBinding
 import com.example.storysappa.databinding.DetailStoryBinding
 import com.example.storysappa.main.MainActivity
+import com.example.storysappa.signup.SignupViewModel
 import com.example.storysappa.story.ListStoryItem
 import com.example.storysappa.story.StoryViewModel
 import com.example.storysappa.upload.UploadViewModel
@@ -30,15 +32,16 @@ class AddStoryActivity: AppCompatActivity() {
 
     private var currentImageUri: Uri? = null
 
-    private val viewModelUpload by viewModels<UploadViewModel> {
-        ViewModelFactory.getInstance(this)
-    }
+    private lateinit var viewModelUpload: UploadViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = AddStoryActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val factory = ViewModelFactory.getInstance(applicationContext)
+        viewModelUpload = ViewModelProvider(this, factory).get(UploadViewModel::class.java)
 
         binding.buttonGallery.setOnClickListener { startGallery() }
 

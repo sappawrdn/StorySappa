@@ -11,13 +11,9 @@ class StoryRepository private constructor(
     }
 
     companion object {
-        @Volatile
-        private var INSTANCE: StoryRepository? = null
-
+        @JvmStatic
         fun getInstance(storyApiService: StoryApiService, pref: UserPreference): StoryRepository {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: StoryRepository(storyApiService, pref).also { INSTANCE = it }
+            return StoryRepository(storyApiService, pref)
             }
         }
     }
-}

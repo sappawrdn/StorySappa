@@ -22,12 +22,17 @@ class SignupViewModel(private val repository: SignupRepository) : ViewModel() {
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: MutableLiveData<String?> = _errorMessage
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
     fun register(name: String, email: String, password: String) {
+        _isLoading.value = true
         viewModelScope.launch {
             try {
                 val response = repository.registerRepo(name, email, password)
                 val message = response.message
                 _successMessage.value = message
+                _isLoading.value = false
             } catch (e: HttpException) {
                 val jsonInString = e.response()?.errorBody()?.string()
                 val errorBody = Gson().fromJson(jsonInString, SignupResponse::class.java)

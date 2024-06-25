@@ -25,19 +25,26 @@ class LoginViewModel(
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
 
+    private val _isLoading = MutableLiveData<Boolean>(false)
+    val isLoading: LiveData<Boolean> = _isLoading
+
+
     fun login(email: String, password: String){
         viewModelScope.launch {
+            _isLoading.value = true
             try {
                 val response = loginRepository.loginRepo(email, password)
                 if (response.error == true) {
                     _errorMessage.value = response.message
+                    _isLoading.value = false
                 } else {
                     _loginResponse.value = response
                     _successMessage.value = response.message
-                    response.loginResult?.let {
+                    _isLoading.value = false
+                    response.loginResult?.let {loginresult ->
                         val userModel = UserModel(
                             email = email,
-                            token = it.token ?: "",
+                            token = loginresult.token ?: "",
                             isLogin = true
                         )
                         userRepository.saveSession(userModel)

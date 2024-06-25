@@ -11,13 +11,9 @@ class SignupRepository private constructor(
     }
 
     companion object {
-        @Volatile
-        private var INSTANCE: SignupRepository? = null
-
+        @JvmStatic
         fun getInstance(signupApiService: SignupApiService): SignupRepository {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: SignupRepository(signupApiService).also { INSTANCE = it }
-            }
+            return SignupRepository(signupApiService)
         }
     }
 }

@@ -4,6 +4,9 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +14,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,19 +33,10 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var viewModel: MainViewModel
+    private lateinit var storyViewModel: StoryViewModel
+
     private lateinit var adapter: StoryAdapter
-    private val viewModel by viewModels<MainViewModel> {
-        ViewModelFactory.getInstance(this)
-    }
-
-    private val viewModelStory by viewModels<StoryViewModel> {
-        ViewModelFactory.getInstance(this)
-    }
-
-    private val userRepository: UserRepository by lazy {
-        UserRepository.getInstance(UserPreference.getInstance(this.dataStore))
-    }
-
 
     private lateinit var binding: ActivityMainBinding
 
@@ -50,25 +45,55 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val factory = ViewModelFactory.getInstance(applicationContext)
+        viewModel = ViewModelProvider(this, factory).get(MainViewModel::class.java)
+
+        val factoryStory = ViewModelFactory.getInstance(applicationContext)
+        storyViewModel = ViewModelProvider(this, factoryStory).get(StoryViewModel::class.java)
+
+        setSupportActionBar(binding.toolbar)
+
         viewModel.getSession().observe(this) { user ->
             if (!user.isLogin) {
                 startActivity(Intent(this, WelcomeActivity::class.java))
                 finish()
+                storyViewModel.fetchStories()
             }
         }
+
+
 
         binding.buttonAdd.setOnClickListener {
             val intent = Intent(this, AddStoryActivity::class.java)
             startActivity(intent)
         }
 
-        viewModelStory.stories.observe(this, { response ->
+        storyViewModel.stories.observe(this, { response ->
             adapter.submitList(response.listStory)
         })
 
         setupView()
-        viewModelStory.fetchStories()
+        storyViewModel.fetchStories()
         showRecyclerList()
+        storyViewModel.isLoading.observe(this){
+            showLoading(it)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_favorite, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.logout -> {
+                viewModel.logout()
+                finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun setupView() {
@@ -81,14 +106,7 @@ class MainActivity : AppCompatActivity() {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
             )
         }
-        supportActionBar?.hide()
     }
-
-//    private fun setupAction() {
-//        binding.logoutButton.setOnClickListener {
-//            viewModel.logout()
-//        }
-//    }
 
     private fun showRecyclerList(){
         val layoutManager = LinearLayoutManager(this)
@@ -104,7 +122,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        viewModelStory.fetchStories()
+        storyViewModel.fetchStories()
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.progbarStory.visibility = View.VISIBLE
+        } else {
+            binding.progbarStory.visibility = View.GONE
+        }
     }
 
 }

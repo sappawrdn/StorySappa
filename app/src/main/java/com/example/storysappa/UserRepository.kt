@@ -18,13 +18,9 @@ class UserRepository private constructor(
     }
 
     companion object {
-        @Volatile
-        private var instance: UserRepository? = null
-        fun getInstance(
-            userPreference: UserPreference
-        ): UserRepository =
-            instance ?: synchronized(this) {
-                instance ?: UserRepository(userPreference)
-            }.also { instance = it }
+        @JvmStatic
+        fun getInstance(userPreference: UserPreference): UserRepository {
+            return UserRepository(userPreference)
+        }
     }
 }

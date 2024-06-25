@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Patterns
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.EditText
@@ -12,26 +13,33 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.storysappa.ViewModelFactory
 import com.example.storysappa.databinding.ActivitySignupBinding
+import com.example.storysappa.login.LoginViewModel
+import kotlin.math.sign
 
 class SignupActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignupBinding
 
-
-    private val signupViewModel: SignupViewModel by viewModels {
-        ViewModelFactory.getInstance(this)
-    }
+    private lateinit var signupViewModel: SignupViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val factory = ViewModelFactory.getInstance(applicationContext)
+        signupViewModel = ViewModelProvider(this, factory).get(SignupViewModel::class.java)
+
         setupView()
         setupAction()
         setupTextWatchers()
         observeViewModel()
+
+        signupViewModel.isLoading.observe(this){
+            showLoading(it)
+        }
 
     }
 
@@ -125,6 +133,14 @@ class SignupActivity : AppCompatActivity() {
             }
             create()
             show()
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.progbar.visibility = View.VISIBLE
+        } else {
+            binding.progbar.visibility = View.GONE
         }
     }
 }
