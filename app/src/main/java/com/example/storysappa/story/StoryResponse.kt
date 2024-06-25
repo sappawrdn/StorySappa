@@ -31,22 +31,22 @@ data class ListStoryItem(
 	val description: String? = null,
 
 	@field:SerializedName("lon")
-	val lon: Double? = null,
+	val lon: Double,
 
 	@field:SerializedName("id")
 	val id: String? = null,
 
 	@field:SerializedName("lat")
-	val lat: Double? = null
+	val lat: Double
 ) : Parcelable {
 	constructor(parcel: Parcel) : this(
 		parcel.readString(),
 		parcel.readString(),
 		parcel.readString(),
 		parcel.readString(),
-		parcel.readValue(Double::class.java.classLoader) as? Double,
+		parcel.readValue(Double::class.java.classLoader) as Double,
 		parcel.readString(),
-		parcel.readValue(Double::class.java.classLoader) as? Double
+		parcel.readValue(Double::class.java.classLoader) as Double
 	) {
 	}
 

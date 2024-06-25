@@ -7,4 +7,10 @@
         android:title="Logout"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/maps"
+        android:icon="@drawable/ic_map"
+        android:title="Maps"
+        app:showAsAction="always"/>
+
 </menu>

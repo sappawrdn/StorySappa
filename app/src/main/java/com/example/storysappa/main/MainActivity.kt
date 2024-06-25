@@ -26,6 +26,7 @@ import com.example.storysappa.UserRepository
 import com.example.storysappa.ViewModelFactory
 import com.example.storysappa.dataStore
 import com.example.storysappa.databinding.ActivityMainBinding
+import com.example.storysappa.maps.MapsActivity
 import com.example.storysappa.story.StoryViewModel
 import com.example.storysappa.welcome.WelcomeActivity
 import kotlinx.coroutines.flow.first
@@ -68,10 +69,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        storyViewModel.stories.observe(this, { response ->
-            adapter.submitList(response.listStory)
-        })
-
         setupView()
         storyViewModel.fetchStories()
         showRecyclerList()
@@ -90,6 +87,11 @@ class MainActivity : AppCompatActivity() {
             R.id.logout -> {
                 viewModel.logout()
                 finish()
+                true
+            }
+            R.id.maps -> {
+                val intent = Intent(this, MapsActivity::class.java)
+                startActivity(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -118,6 +120,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         binding.rvStory.adapter = adapter
+        storyViewModel.stories2.observe(this,{
+            adapter.submitData(lifecycle,it)
+        })
     }
 
     override fun onResume() {

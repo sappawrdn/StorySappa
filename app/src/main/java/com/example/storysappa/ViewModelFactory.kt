@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.storysappa.login.LoginRepository
 import com.example.storysappa.login.LoginViewModel
 import com.example.storysappa.main.MainViewModel
+import com.example.storysappa.maps.MapsViewModel
 import com.example.storysappa.signup.SignupRepository
 import com.example.storysappa.signup.SignupViewModel
 import com.example.storysappa.story.StoryRepository
@@ -38,6 +39,9 @@ class ViewModelFactory private constructor(
             }
             modelClass.isAssignableFrom(UploadViewModel::class.java) -> {
                 UploadViewModel(uploadApiRepository) as T
+            }
+            modelClass.isAssignableFrom(MapsViewModel::class.java) -> {
+                MapsViewModel(storyRepository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }

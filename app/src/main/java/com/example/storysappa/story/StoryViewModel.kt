@@ -6,11 +6,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 class StoryViewModel(private val storyRepository: StoryRepository) : ViewModel(),
     ViewModelProvider.Factory {
+
+    val stories2: LiveData<PagingData<ListStoryItem>> =
+        storyRepository.getStories().cachedIn(viewModelScope)
 
     private val _stories = MutableLiveData<StoryResponse>()
     val stories: LiveData<StoryResponse> = _stories
