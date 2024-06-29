@@ -3,6 +3,7 @@ package com.example.storysappa.login
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
@@ -39,21 +40,15 @@ class LoginActivity : AppCompatActivity() {
         val userPreference = UserPreference.getInstance(dataStore)
         userRepository = UserRepository.getInstance(userPreference)
 
-        loginViewModel.isLoading.observe(this, Observer { isLoading ->
-            if (isLoading) {
-                showLoading(isLoading)
-            } else {
-                showLoading(isLoading)
-            }
-        })
+        loginViewModel.isLoading.observe(this) { isLoading ->
+            Log.e("LoginActivity", "isLoading: $isLoading")
+            showLoading(isLoading)
+        }
 
         setupView()
         setupAction()
         observeViewModel()
 
-        loginViewModel.isLoading.observe(this){
-            showLoading(it)
-        }
     }
 
     private fun setupView() {
@@ -127,10 +122,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.progbar.visibility = View.VISIBLE
-        } else {
-            binding.progbar.visibility = View.GONE
-        }
+        Log.d("LoginActivity", "showLoading called with isLoading: $isLoading")
+        binding.progbar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }

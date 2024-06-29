@@ -18,13 +18,8 @@ class UploadApiRepository(
     }
 
     companion object {
-        @Volatile
-        private var INSTANCE: UploadApiRepository? = null
-
         fun getInstance(apiService: UploadApiService, pref: UserPreference): UploadApiRepository {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: UploadApiRepository(apiService, pref).also { INSTANCE = it }
-            }
+            return UploadApiRepository(apiService, pref)
         }
     }
 }

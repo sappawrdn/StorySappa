@@ -22,7 +22,7 @@ class SignupViewModel(private val repository: SignupRepository) : ViewModel() {
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: MutableLiveData<String?> = _errorMessage
 
-    private val _isLoading = MutableLiveData<Boolean>()
+    private val _isLoading = MutableLiveData<Boolean>(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
     fun register(name: String, email: String, password: String) {
@@ -30,9 +30,14 @@ class SignupViewModel(private val repository: SignupRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = repository.registerRepo(name, email, password)
-                val message = response.message
-                _successMessage.value = message
-                _isLoading.value = false
+                if (response.error == true){
+                    val message = response.message
+                    _errorMessage.value = message
+                    _isLoading.value = false
+                }else{
+                    _successMessage.value = response.message
+                    _isLoading.value = false
+                }
             } catch (e: HttpException) {
                 val jsonInString = e.response()?.errorBody()?.string()
                 val errorBody = Gson().fromJson(jsonInString, SignupResponse::class.java)
@@ -40,6 +45,8 @@ class SignupViewModel(private val repository: SignupRepository) : ViewModel() {
                 _errorMessage.value = errorMessage
             } catch (e: Exception) {
                 _errorMessage.value = "Registration failed: ${e.message}"
+            }finally {
+                _isLoading.value = false
             }
         }
     }

@@ -1,7 +1,5 @@
 package com.example.storysappa.signup
 
-import com.example.storysappa.UserPreference
-import com.example.storysappa.UserRepository
 
 class SignupRepository private constructor(
     private val signupApiService: SignupApiService

@@ -32,47 +32,14 @@ class SignupActivity : AppCompatActivity() {
         val factory = ViewModelFactory.getInstance(applicationContext)
         signupViewModel = ViewModelProvider(this, factory).get(SignupViewModel::class.java)
 
+        signupViewModel.isLoading.observe(this, { isLoading ->
+            showLoading(isLoading)
+        })
+
         setupView()
         setupAction()
-        setupTextWatchers()
         observeViewModel()
 
-        signupViewModel.isLoading.observe(this){
-            showLoading(it)
-        }
-
-    }
-
-    private fun setupTextWatchers() {
-        binding.emailEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val email = s.toString()
-                if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                    binding.emailEditTextLayout.error = "Format email salah"
-                } else {
-                    binding.emailEditTextLayout.error = null
-                }
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        binding.passwordEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val password = s.toString()
-                if (password.length < 8) {
-                    binding.passwordEditTextLayout.error = "Password tidak boleh kurang dari 8 karakter"
-                } else {
-                    binding.passwordEditTextLayout.error = null
-                }
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
     }
 
     private fun setupView() {

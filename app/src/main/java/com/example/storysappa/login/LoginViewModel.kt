@@ -52,13 +52,10 @@ class LoginViewModel(
                 }
             }catch (e: Exception){
                 _error.value = "Login failed: ${e.message}"
+                _isLoading.value = false
+            }finally {
+                _isLoading.value = false
             }
         }
     }
-
-//    fun saveSession(user: UserModel) {
-//        viewModelScope.launch {
-//            userRepository.saveSession(user)
-//        }
-//    }
 }
